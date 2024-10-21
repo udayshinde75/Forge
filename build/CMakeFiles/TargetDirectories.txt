@@ -1,0 +1,3 @@
+/home/uday/Desktop/Forge/build/CMakeFiles/Forge.dir
+/home/uday/Desktop/Forge/build/CMakeFiles/edit_cache.dir
+/home/uday/Desktop/Forge/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Forge.dir/src/main.cpp.o -o Forge
