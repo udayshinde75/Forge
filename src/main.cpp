@@ -3,8 +3,12 @@
 #include <sstream>
 #include <optional>
 #include <vector>
+#include "./Tokenizer.hpp"
+#include "./Parser.hpp"
+#include "./Generation.hpp"
 /*****************************************Basic Program to convert .Fg file to Assembly Language****************************************************/
 //21-10-2024 : Uday : created class for token
+/*
 enum class TokenType {
     _Ret,
     _Intliteral,
@@ -72,8 +76,9 @@ std::vector<Token> Tokenize(const std::string& str) {
 
     return Tokens;
 }
-
+*/
 //21-10-2024 : uday : Function to convert array of tokens into assembly code
+/*
 std::string TokensToAsm(const std::vector<Token>& Tokens){
     std :: stringstream output;
     output << ".global _start\n_start:\n";
@@ -99,6 +104,7 @@ std::string TokensToAsm(const std::vector<Token>& Tokens){
     return output.str();
     
 }
+*/
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -119,8 +125,20 @@ int main(int argc, char* argv[]) {
     input.close();
     std::string Content = contents_stream.str(); // Convert stream to string
 
+    Tokenizer tokenizer(std :: move(Content));
+
+
     //21-10-2024 : uday : Tokenize the content
-    std::vector<Token> tokens = Tokenize(Content);
+    std::vector<Token> tokens = tokenizer.Tokenize();
+    Parser parser(std::move(tokens));
+    std::optional <NodeRet> tree = parser.parse();
+    if (!tree.has_value())
+    {
+        std :: cerr << "No exit statement found." << std :: endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    Generator generator(tree.value());
 
     //21-10-2024 : uday : Output the tokens for debugging
     for (const auto& token : tokens) {
@@ -136,14 +154,14 @@ int main(int argc, char* argv[]) {
                 break;
         }
     }
-    std :: fstream file("out.s", std :: ios :: out);
-    file << TokensToAsm(tokens);
+    std :: fstream file("../out.s", std :: ios :: out);
+    file << generator.generate();
     file.close();
-    std :: cout << TokensToAsm(tokens);
+    //std :: cout << TokensToAsm(tokens);
 
     //21-10-2024 : uday : commands to create an executable code.
-    system("as -o out.o out.s");
-    system("ld -o out out.o");
+    system("as -o ../out.o ../out.s");
+    system("ld -o ../out ../out.o");
 
     return EXIT_SUCCESS;
 }
